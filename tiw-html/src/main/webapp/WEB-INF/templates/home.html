@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Home Page</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/home.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h1>Welcome, <span th:text="${username}">User</span>!</h1>
+    <h2>Folders</h2>
+    <div th:utext="${folderTreeHtml}"></div>
+    <p><a th:href="@{/protected/contentManagement}">Manage Content</a></p>
+    <p><a th:href="@{/logout}">Logout</a></p>
+</body>
+</html>

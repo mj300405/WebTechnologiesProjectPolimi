@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>View Document</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/viewDocument.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h1>View Document</h1>
+    <p><strong>Name:</strong> <span th:text="${document.name}">Document Name</span></p>
+    <p><strong>Summary:</strong> <span th:text="${document.summary}">Document Summary</span></p>
+    <p><strong>Created At:</strong> <span th:text="${document.createdAt}">Creation Date</span></p>
+    <p><a th:href="@{/protected/content?folderId=${document.folderId}}">Back to Folder</a></p>
+    <p><a th:href="@{/protected/home}">Home</a></p>
+    <p><a th:href="@{/logout}">Logout</a></p>
+</body>
+</html>

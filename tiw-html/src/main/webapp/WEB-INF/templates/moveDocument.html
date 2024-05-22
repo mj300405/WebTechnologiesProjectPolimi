@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Move Document</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/moveDocument.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        .current-folder {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>	
+    <h1>Move Document</h1>
+
+    <!-- Message Section -->
+    <div th:if="${error}" th:text="${error}" style="color: red;"></div>
+    <div th:if="${success}" th:text="${success}" style="color: green;"></div>
+
+    <p>You are moving document <strong th:text="${document.name}">Document Name</strong> from folder <strong th:text="${sourceFolderName}">Source Folder</strong>.</p>
+    <form th:action="@{/protected/moveDocument}" method="post">
+    	<input type="hidden" name="csrfToken" th:value="${csrfToken}" />
+        <input type="hidden" name="documentId" th:value="${document.id}" />
+        <input type="hidden" name="currentFolderId" th:value="${currentFolderId}" />
+        <label for="destinationFolderId">Choose the destination folder:</label>
+        <select id="destinationFolderId" name="destinationFolderId" th:utext="${folderOptionsHtml}">
+        </select>
+        <button type="submit">Move</button>
+    </form>
+    <p><a href="javascript:history.back()">Go Back</a></p>
+    <p><a th:href="@{/protected/home}">Home</a></p>
+</body>
+</html>

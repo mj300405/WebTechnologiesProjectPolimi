@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/document.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h1 th:text="${document.name}">Document Name</h1>
+
+    <!-- Message Section -->
+    <div th:if="${error}" th:text="${error}" style="color: red;"></div>
+
+    <p><strong>Summary:</strong> <span th:text="${document.summary}"></span></p>
+    <p><strong>Type:</strong> <span th:text="${document.type}"></span></p>
+    <p><strong>Created At:</strong> <span th:text="${document.createdAt}"></span></p>
+    <p><a href="javascript:history.back()">Go Back</a></p>
+    <p><a th:href="@{/protected/home}">Home</a></p>
+    <p><a th:href="@{/logout}">Logout</a></p>
+</body>
+</html>
+ 

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Fragments</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/fragments.css}">
+</head>
+<body>
+    <div th:fragment="folderTree :: folderTree(folders)">
+        <ul>
+            <li th:each="folder : ${folders}">
+                <a th:href="@{/protected/contentManagement}" th:text="${folder.name}"></a>
+                <div th:if="${folder.subfolders != null && !folder.subfolders.isEmpty()}" th:include="this :: folderTree(${folder.subfolders})"></div>
+            </li>
+        </ul>
+    </div>
+</body>
+</html>

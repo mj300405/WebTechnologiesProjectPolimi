@@ -1,0 +1,38 @@
+@charset "UTF-8";
+
+/* Quick example, please expand upon this for a better design */
+body {
+    font-family: Arial, sans-serif;
+}
+
+.registration-form {
+    width: 300px;
+    margin: 50px auto;
+}
+
+.registration-form h2 {
+    text-align: center;
+}
+
+.registration-form form {
+    display: flex;
+    flex-direction: column;
+}
+
+.registration-form label {
+    margin-top: 10px;
+}
+
+.registration-form input {
+    padding: 8px;
+    margin-top: 5px;
+}
+
+.registration-form button {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}

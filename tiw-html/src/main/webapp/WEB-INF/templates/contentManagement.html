@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Content Management</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/contentManagement.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">	
+</head>
+<body>
+    <h1>Content Management</h1>
+
+    <!-- Message Section -->
+    <div th:if="${message}" th:text="${message}" style="color: green;"></div>
+    <div th:if="${error}" th:text="${error}" style="color: red;"></div>
+
+    <h2>Create Folder</h2>
+    <form th:action="@{/protected/contentManagement}" method="post">
+    	<input type="hidden" name="csrfToken" th:value="${csrfToken}" />
+        <input type="hidden" name="action" value="createFolder" />
+        <label for="folderName">Folder Name:</label>
+        <input type="text" id="folderName" name="folderName" required>
+        <label for="parentId">Parent Folder:</label>
+        <select id="parentId" name="parentId">
+            <option value="">None</option>
+            <th:block th:utext="${folderOptionsHtml}"></th:block>
+        </select>
+        <button type="submit">Create Folder</button>
+    </form>
+    
+    <h2>Create Document</h2>
+    <form th:action="@{/protected/contentManagement}" method="post">
+    	<input type="hidden" name="csrfToken" th:value="${csrfToken}" />
+        <input type="hidden" name="action" value="createDocument" />
+        <label for="documentName">Document Name:</label>
+        <input type="text" id="documentName" name="documentName" required>
+        <label for="summary">Summary:</label>
+        <input type="text" id="summary" name="summary" required>
+        <label for="type">Type:</label>
+        <input type="text" id="type" name="type" required>
+        <label for="folderId">Folder:</label>
+        <select id="folderId" name="folderId" required>
+            <th:block th:utext="${folderOptionsHtml}"></th:block>
+        </select>
+        <button type="submit">Create Document</button>
+    </form>
+    
+    <p><a href="javascript:history.back()">Go Back</a></p>
+    <p><a th:href="@{/protected/home}">Home</a></p>
+    <p><a th:href="@{/logout}">Logout</a></p>
+</body>
+</html>
+

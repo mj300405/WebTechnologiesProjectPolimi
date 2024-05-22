@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document Management</title>
+    <link rel="stylesheet" href="css/home.css">
+</head>
+<body>
+    <header>
+        <h1>Document Management System</h1>
+        <button id="logoutButton">Logout</button>
+    </header>
+    <div class="main-container">
+        <aside class="folder-area">
+            <h2>Folders</h2>
+            <button id="addFolderButton">Add New Folder</button>
+            <div class="folder-container">
+                <ul id="folderList">
+                    <!-- Folder list will be populated here -->
+                </ul>
+            </div>
+        </aside>
+        <section class="document-details-area" id="documentDetailsSection">
+            <h2>Document Details</h2>
+            <div id="documentDetails">
+                <!-- Document details will be displayed here -->
+            </div>
+        </section>
+    </div>
+
+    <!-- Bin Element -->
+    <div id="bin">Trash</div>
+
+    <script src="home.js"></script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration</title>
+    <!-- Link to CSS file -->
+    <link rel="stylesheet" href="css/register.css">
+</head>
+<body>
+
+<div class="registration-form">
+    <h2>Register</h2>
+    <form id="registrationForm" action="/tiw_js/register" method="post">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        
+        <label for="confirmPassword">Confirm Password:</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" required>
+        
+        <button type="submit">Register</button>
+    </form>
+    <p>Already have an account? <a href="login.html">Log in here</a>.</p>
+</div>
+
+
+<script src="register.js"></script>
+</body>
+</html>

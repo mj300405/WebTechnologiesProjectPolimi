@@ -1,0 +1,94 @@
+<!--  <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Content Page</title>
+</head>
+<body>
+    <h1 th:text="'Folder: ' + ${folder.name}">Folder Name</h1>
+    <h2>Subfolders</h2>
+    <ul>
+        <li th:each="subfolder : ${subfolders}">
+            <a th:href="@{/protected/content(folderId=${subfolder.id})}" th:text="${subfolder.name}">Subfolder Name</a>
+        </li>
+    </ul>
+    <h2>Documents</h2>
+    <ul>
+        <li th:each="document : ${documents}">
+            <span th:text="${document.name}">Document Name</span>
+            <a th:href="@{/protected/document(documentId=${document.id})}">View</a>
+            <a th:href="@{/protected/moveDocument(documentId=${document.id})}">Move</a>
+        </li>
+    </ul>
+    <p><a th:href="@{/protected/home}">Back to Home</a></p>
+    <p><a th:href="@{/logout}">Logout</a></p>
+</body>
+</html>
+  -->
+<!--   <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Content Page</title>
+</head>
+<body>
+    <h1 th:text="'Folder: ' + ${folder.name}">Folder Name</h1>
+
+    Message Section
+    <div th:if="${message}" th:text="${message}" style="color: green;"></div>
+    <div th:if="${error}" th:text="${error}" style="color: red;"></div>
+
+    <h2>Subfolders</h2>
+    <ul>
+        <li th:each="subfolder : ${subfolders}">
+            <a th:href="@{/protected/content(folderId=${subfolder.id})}" th:text="${subfolder.name}">Subfolder Name</a>
+        </li>
+    </ul>
+    <h2>Documents</h2>
+    <ul>
+        <li th:each="document : ${documents}">
+            <span th:text="${document.name}">Document Name</span>
+            <a th:href="@{/protected/document(documentId=${document.id})}">View</a>
+            <a th:href="@{/protected/moveDocument(documentId=${document.id})}">Move</a>
+        </li>
+    </ul>
+    <p><a th:href="@{/protected/home}">Back to Home</a></p>
+    <p><a th:href="@{/logout}">Logout</a></p>
+</body>
+</html>
+   -->
+   
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Content Page</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/content.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h1 th:text="'Folder: ' + ${folder.name}">Folder Name</h1>
+
+    <!-- Message Section -->
+    <div th:if="${message}" th:text="${message}" style="color: green;"></div>
+    <div th:if="${error}" th:text="${error}" style="color: red;"></div>
+
+    <h2>Subfolders</h2>
+    <ul>
+        <li th:each="subfolder : ${subfolders}">
+            <a th:href="@{/protected/content(folderId=${subfolder.id})}" th:text="${subfolder.name}">Subfolder Name</a>
+        </li>
+    </ul>
+    <h2>Documents</h2>
+    <ul>
+        <li th:each="document : ${documents}">
+            <span th:text="${document.name}">Document Name</span>
+            <a th:href="@{/protected/document(documentId=${document.id})}">View</a>
+            <a th:href="@{/protected/moveDocument(documentId=${document.id})}">Move</a>
+        </li>
+    </ul>
+    <p><a th:href="@{/protected/home}">Back to Home</a></p>
+    <p><a th:href="@{/logout}">Logout</a></p>
+</body>
+</html>
+   
