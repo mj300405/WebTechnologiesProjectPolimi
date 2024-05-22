@@ -1,2 +1,2 @@
-# tiw_js
+# WebTechnologiesProjectPolimi
  POLIMI Web technologies project
