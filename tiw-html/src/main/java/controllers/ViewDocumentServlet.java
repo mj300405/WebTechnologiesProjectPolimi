@@ -11,13 +11,14 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 
 @WebServlet("/protected/viewDocument")
 public class ViewDocumentServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-	private TemplateEngine templateEngine;
+    private TemplateEngine templateEngine;
     private DocumentDAO documentDAO;
 
     @Override
@@ -30,18 +31,25 @@ public class ViewDocumentServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String documentIdStr = request.getParameter("documentId");
+        HttpSession session = request.getSession(false);
 
+        if (session == null || session.getAttribute("userId") == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+
+        String documentIdStr = request.getParameter("documentId");
         if (documentIdStr == null) {
             response.sendRedirect("error");
             return;
         }
 
         try {
+            int userId = (Integer) session.getAttribute("userId");
             int documentId = Integer.parseInt(documentIdStr);
             Document document = documentDAO.getDocumentById(documentId);
 
-            if (document == null) {
+            if (document == null || !documentDAO.isDocumentOwnedByUser(documentId, userId)) {
                 response.sendRedirect("error");
                 return;
             }

@@ -23,7 +23,7 @@ import java.util.List;
 @WebServlet("/protected/contentManagement")
 public class ContentManagementServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-	private TemplateEngine templateEngine;
+    private TemplateEngine templateEngine;
     private FolderDAO folderDAO;
     private DocumentDAO documentDAO;
 
@@ -40,6 +40,11 @@ public class ContentManagementServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             HttpSession session = request.getSession(false);
+
+            if (session == null || session.getAttribute("userId") == null) {
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }
 
             int userId = (Integer) session.getAttribute("userId");
             List<Folder> folders = folderDAO.getAllFoldersByUser(userId);
@@ -76,23 +81,10 @@ public class ContentManagementServlet extends HttpServlet {
 
         try {
             if ("createFolder".equals(action)) {
-                String folderName = request.getParameter("folderName");
-                Integer parentId = null;
-                if (request.getParameter("parentId") != null && !request.getParameter("parentId").isEmpty()) {
-                    parentId = Integer.parseInt(request.getParameter("parentId"));
-                }
-                Folder folder = new Folder(folderName, userId, parentId);
-                folder.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-                folderDAO.addFolder(folder);
+                createFolder(request, userId);
                 request.setAttribute("message", "Folder created successfully.");
             } else if ("createDocument".equals(action)) {
-                String documentName = request.getParameter("documentName");
-                String summary = request.getParameter("summary");
-                String type = request.getParameter("type");
-                int folderId = Integer.parseInt(request.getParameter("folderId"));
-                Document document = new Document(documentName, userId, folderId, summary, type);
-                document.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-                documentDAO.addDocument(document);
+                createDocument(request, userId);
                 request.setAttribute("message", "Document created successfully.");
             }
         } catch (SQLException e) {
@@ -100,6 +92,33 @@ public class ContentManagementServlet extends HttpServlet {
             request.setAttribute("error", "An error occurred: " + e.getMessage());
         }
         doGet(request, response);  // Redirect back to the content management page to display the message
+    }
+
+    private void createFolder(HttpServletRequest request, int userId) throws SQLException {
+        String folderName = request.getParameter("folderName");
+        Integer parentId = null;
+        if (request.getParameter("parentId") != null && !request.getParameter("parentId").isEmpty()) {
+            parentId = Integer.parseInt(request.getParameter("parentId"));
+        }
+        Folder folder = new Folder(folderName, userId, parentId);
+        folder.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        folderDAO.addFolder(folder);
+    }
+
+    private void createDocument(HttpServletRequest request, int userId) throws SQLException {
+        String documentName = request.getParameter("documentName");
+        String summary = request.getParameter("summary");
+        String type = request.getParameter("type");
+        int folderId = Integer.parseInt(request.getParameter("folderId"));
+        
+        // Ensure the user owns the folder they are adding the document to
+        if (!folderDAO.isFolderOwnedByUser(folderId, userId)) {
+            throw new SQLException("You do not have permission to add a document to this folder.");
+        }
+
+        Document document = new Document(documentName, userId, folderId, summary, type);
+        document.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        documentDAO.addDocument(document);
     }
 
     private String buildFolderOptionsHtml(List<Folder> folders, int level) {
@@ -116,4 +135,3 @@ public class ContentManagementServlet extends HttpServlet {
         return sb.toString();
     }
 }
-

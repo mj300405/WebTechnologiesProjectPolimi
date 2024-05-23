@@ -13,6 +13,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.List;
 @WebServlet("/protected/content")
 public class ContentServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-	private TemplateEngine templateEngine;
+    private TemplateEngine templateEngine;
     private FolderDAO folderDAO;
     private DocumentDAO documentDAO;
 
@@ -35,6 +36,13 @@ public class ContentServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+
+        if (session == null || session.getAttribute("userId") == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+
         int folderId;
         try {
             folderId = Integer.parseInt(request.getParameter("folderId"));
@@ -45,6 +53,15 @@ public class ContentServlet extends HttpServlet {
         }
 
         try {
+            int userId = (Integer) session.getAttribute("userId");
+            
+            // Ensure the user owns the folder they are trying to access
+            if (!folderDAO.isFolderOwnedByUser(folderId, userId)) {
+                request.setAttribute("error", "You do not have permission to access this folder.");
+                forwardToContentPage(request, response);
+                return;
+            }
+
             Folder folder = folderDAO.getFolderById(folderId);
             List<Folder> subfolders = folderDAO.getSubfoldersByFolderId(folderId);
             List<Document> documents = documentDAO.getDocumentsByFolder(folderId);

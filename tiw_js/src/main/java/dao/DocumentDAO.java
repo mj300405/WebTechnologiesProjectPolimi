@@ -85,4 +85,20 @@ public class DocumentDAO {
         }
         return null; // Return null if no document is found
     }
+    
+    public boolean isDocumentOwnedByUser(int documentId, int userId) throws SQLException {
+        String query = "SELECT COUNT(*) FROM documents d JOIN folders f ON d.folder_id = f.id WHERE d.id = ? AND f.user_id = ?";
+        try (Connection conn = DatabaseUtils.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, documentId);
+            stmt.setInt(2, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
+
 }

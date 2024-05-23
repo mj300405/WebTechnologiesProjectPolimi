@@ -18,7 +18,7 @@ import java.sql.SQLException;
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-	private TemplateEngine templateEngine;
+    private TemplateEngine templateEngine;
 
     @Override
     public void init() throws ServletException {
@@ -43,6 +43,7 @@ public class LoginServlet extends HttpServlet {
                 HttpSession session = request.getSession();
                 session.setAttribute("userId", userId);
                 session.setAttribute("username", username);
+                session.setMaxInactiveInterval(30 * 60); // Session expires after 30 minutes of inactivity
                 response.sendRedirect(request.getContextPath() + "/protected/home");
             } else {
                 request.setAttribute("error", "Authentication failed.");
@@ -63,7 +64,7 @@ public class LoginServlet extends HttpServlet {
     private void forwardToLoginPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         WebContext context = new WebContext(request, response, getServletContext());
         context.setVariable("error", request.getAttribute("error"));
-        context.setVariable("csrfToken", request.getSession().getAttribute("csrfToken"));
+        context.setVariable("csrfToken", SecurityUtils.generateCsrfToken(request)); // Generate and set CSRF token
         templateEngine.process("login", context, response.getWriter());
     }
 }

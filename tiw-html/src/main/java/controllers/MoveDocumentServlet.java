@@ -14,6 +14,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -22,7 +23,7 @@ import java.util.List;
 public class MoveDocumentServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-	private DocumentDAO documentDAO = new DocumentDAO();
+    private DocumentDAO documentDAO = new DocumentDAO();
     private FolderDAO folderDAO = new FolderDAO();
     private TemplateEngine templateEngine;
 
@@ -35,6 +36,12 @@ public class MoveDocumentServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("userId") == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+
         int documentId;
         try {
             documentId = Integer.parseInt(request.getParameter("documentId"));
@@ -45,9 +52,10 @@ public class MoveDocumentServlet extends HttpServlet {
         }
 
         try {
+            int userId = (Integer) session.getAttribute("userId");
             Document document = documentDAO.getDocumentById(documentId);
-            if (document == null) {
-                request.setAttribute("error", "Document not found.");
+            if (document == null || document.getUserId() != userId) {
+                request.setAttribute("error", "Document not found or you do not have permission to move it.");
                 forwardToMoveDocumentPage(request, response);
                 return;
             }
@@ -60,7 +68,7 @@ public class MoveDocumentServlet extends HttpServlet {
                 return;
             }
 
-            List<Folder> folders = folderDAO.getAllFoldersByUser(document.getUserId());
+            List<Folder> folders = folderDAO.getAllFoldersByUser(userId);
             String folderOptionsHtml = buildFolderOptionsHtml(folders, currentFolderId, 0);
 
             request.setAttribute("document", document);
@@ -83,6 +91,12 @@ public class MoveDocumentServlet extends HttpServlet {
             return;
         }
 
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("userId") == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+
         int documentId, destinationFolderId;
         try {
             documentId = Integer.parseInt(request.getParameter("documentId"));
@@ -94,6 +108,13 @@ public class MoveDocumentServlet extends HttpServlet {
         }
 
         try {
+            int userId = (Integer) session.getAttribute("userId");
+            if (!documentDAO.isDocumentOwnedByUser(documentId, userId) || !folderDAO.isFolderOwnedByUser(destinationFolderId, userId)) {
+                request.setAttribute("error", "You do not have permission to move the document or the destination folder is invalid.");
+                forwardToMoveDocumentPage(request, response);
+                return;
+            }
+
             documentDAO.moveDocumentToFolder(documentId, destinationFolderId);
             request.setAttribute("success", "Document moved successfully.");
             response.sendRedirect(request.getContextPath() + "/protected/content?folderId=" + destinationFolderId);

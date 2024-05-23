@@ -19,7 +19,7 @@ import java.util.List;
 @WebServlet("/protected/home")
 public class HomeServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-	private TemplateEngine templateEngine;
+    private TemplateEngine templateEngine;
     private FolderDAO folderDAO;
 
     @Override

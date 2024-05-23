@@ -2,7 +2,6 @@ package controllers;
 
 import beans.Folder;
 import dao.FolderDAO;
-import dao.UserDAO;
 import utils.ThymeleafConfig;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -21,8 +20,7 @@ import java.util.List;
 public class FolderServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-	private FolderDAO folderDAO = new FolderDAO();
-    private UserDAO userDAO = new UserDAO();
+    private FolderDAO folderDAO = new FolderDAO();
     private TemplateEngine templateEngine;
 
     @Override
@@ -33,40 +31,46 @@ public class FolderServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        String username = (String) session.getAttribute("user");
+        HttpSession session = request.getSession(false);
+        
+        if (session == null || session.getAttribute("userId") == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+
+        int userId = (Integer) session.getAttribute("userId");
 
         try {
-            int userId = userDAO.getUserIdByUsername(username);
-            if (userId == -1) {
-                response.sendRedirect("error");
-                return;
-            }
-
             List<Folder> folders = folderDAO.getAllFolders(userId);
             WebContext context = new WebContext(request, response, getServletContext());
             context.setVariable("folders", folders);
             templateEngine.process("home", context, response.getWriter());
         } catch (SQLException e) {
             e.printStackTrace();
-            response.sendRedirect("error");
+            response.sendRedirect(request.getContextPath() + "/error");
         }
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        
+        if (session == null || session.getAttribute("userId") == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+
         String folderName = request.getParameter("folderName");
         String parentIdStr = request.getParameter("parentId");
-        HttpSession session = request.getSession();
-        String username = (String) session.getAttribute("user");
+        int userId = (Integer) session.getAttribute("userId");
 
         try {
-            int userId = userDAO.getUserIdByUsername(username);
-            if (userId == -1) {
+            Integer parentId = (parentIdStr != null && !parentIdStr.isEmpty()) ? Integer.valueOf(parentIdStr) : null;
+            
+            if (parentId != null && !folderDAO.isFolderOwnedByUser(parentId, userId)) {
                 response.sendRedirect("error");
                 return;
             }
 
-            Integer parentId = (parentIdStr != null && !parentIdStr.isEmpty()) ? Integer.valueOf(parentIdStr) : null;
             Folder folder = new Folder(folderName, userId, parentId);
             folderDAO.addFolder(folder);
             response.sendRedirect("folders");
